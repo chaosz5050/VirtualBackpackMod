@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 public class VirtualBackpackMod : ModInterface
 {
   private ModGameAPI api;
-  private string dataPath = "Mods/VirtualBackpackMod/PlayerData";
+  private string dataPath = Path.Combine(Path.GetDirectoryName(typeof(VirtualBackpackMod).Assembly.Location), "PlayerData");
 
   public void Game_Start(ModGameAPI dediAPI)
   {
