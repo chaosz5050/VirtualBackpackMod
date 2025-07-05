@@ -4,9 +4,14 @@ A simple and persistent **virtual backpack mod** for Empyrion multiplayer server
 
 This mod provides every player with a 40-slot private inventory accessible via the `/vb` command. Items placed inside are saved per-player and persist across play sessions and server restarts.
 
----
+![Empyrion Server Helper](https://img.shields.io/badge/Platform-Linux-blue)
+![Python](https://img.shields.io/badge/Python-3.8%2B-green)
+![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-orange)
+
 ## Short version
 - Copy ../VirtualBackpackMod.dll and /bin/Releases/netstandard2.0/VirtualBackpackMod.yaml to the mods directory on your Empyrion server and reboot.
+
+I take no reponsibility for lost items or other proplems. It's just a hobby project for my own server and I decided to share it :)
 
 ## 🎯 Features
 
