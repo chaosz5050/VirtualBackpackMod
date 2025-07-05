@@ -99,18 +99,28 @@ Shared faction storage
 
 Integration with Linux-based external management tool
 
-📄 License
-MIT License — do whatever you want, just don’t blame me if your backpack eats your fusion cells. 😅
 
-✨ Credits
-Created by René and GPT
-Tested on Hosting Havoc
-No ModHelper. No EAH. Just C#.
+**🔗 [Discord Server](https://discord.gg/WFtZRWVB)**
 
-yaml
-Copy
-Edit
+Get help with:
+- Tool setup and configuration
+- Server administration tips
+- Bug reports and feature requests
+- General Empyrion server management
 
----
+## License
 
-Let me know if you want to tweak the tone (more technical? more casual?), or generate a `LICENSE` file or `info.yaml` template with your ne
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License**.
+
+### What this means:
+- ✅ **You can freely use** this software for personal and non-commercial purposes
+- ✅ **You can modify** and redistribute the code
+- ✅ **You can share** it with others
+- 🚫 **You cannot sell** this software or use it for commercial purposes
+- 🔄 **Any modifications** must be shared under the same license
+- 👤 **You must give credit** to the original author
+
+**Full license text**: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+### Commercial Use
+If you're interested in commercial use or licensing, please contact the maintainers through our Discord community.
