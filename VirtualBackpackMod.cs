@@ -1,13 +1,15 @@
-﻿using Eleon;
+using Eleon;
 using Eleon.Modding;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public class VirtualBackpackMod : ModInterface
 {
   private ModGameAPI api;
   private string dataPath = Path.Combine(Path.GetDirectoryName(typeof(VirtualBackpackMod).Assembly.Location), "PlayerData");
+  private Dictionary<int, int> activeBackpackIndex = new Dictionary<int, int>();
 
   public void Game_Start(ModGameAPI dediAPI)
   {
@@ -18,6 +20,13 @@ public class VirtualBackpackMod : ModInterface
 
   public void Game_Exit()
   {
+    // Save any open backpacks before shutdown
+    foreach (var kvp in activeBackpackIndex)
+    {
+      api.Console_Write($"[Backpack] Cleaning up tracking for player {kvp.Key}");
+    }
+    activeBackpackIndex.Clear();
+    
     api?.Console_Write("VirtualBackpackMod shutting down.");
   }
 
@@ -28,14 +37,29 @@ public class VirtualBackpackMod : ModInterface
     if (eventId == CmdId.Event_ChatMessage)
     {
       var chat = (ChatInfo)data;
+      string msg = chat.msg.Trim().ToLowerInvariant();
 
-      if (chat.msg.Trim() == "/vb")
+      int backpackNumber = 0;
+
+      if (msg == "/vb1")
+      {
+        backpackNumber = 1;
+      }
+      else if (msg == "/vb2")
+      {
+        backpackNumber = 2;
+      }
+
+      if (backpackNumber > 0)
       {
         int playerId = chat.playerId;
         string playerKey = playerId.ToString();
 
-        var items = LoadBackpack(playerKey);
-        ShowBackpackUI(playerId, seqNr, items);
+        // Track which backpack this player is using
+        activeBackpackIndex[playerId] = backpackNumber;
+
+        var items = LoadBackpack(playerKey, backpackNumber);
+        ShowBackpackUI(playerId, seqNr, items, backpackNumber);
       }
     }
 
@@ -46,17 +70,24 @@ public class VirtualBackpackMod : ModInterface
       int playerId = exchange.id;
       string playerKey = playerId.ToString();
 
-      SaveBackpack(playerKey, exchange.items);
-      api.Console_Write($"[Backpack] Saved backpack for player {playerId}");
+      // Get which backpack this player was using
+      if (activeBackpackIndex.TryGetValue(playerId, out int backpackNumber))
+      {
+        SaveBackpack(playerKey, exchange.items, backpackNumber);
+        api.Console_Write($"[Backpack] Saved backpack {backpackNumber} for player {playerId}");
+        
+        // DON'T remove from tracking - keep it so multiple saves work
+        // activeBackpackIndex.Remove(playerId);
+      }
     }
   }
 
-  private void ShowBackpackUI(int playerId, ushort seqNr, ItemStack[] items)
+  private void ShowBackpackUI(int playerId, ushort seqNr, ItemStack[] items, int backpackNumber)
   {
     ItemExchangeInfo ui = new ItemExchangeInfo()
     {
       id = playerId,
-      title = "Virtual Backpack",
+      title = $"Virtual Backpack {backpackNumber}",
       desc = "Your personal storage",
       items = items,
       buttonText = "Close"
@@ -65,9 +96,9 @@ public class VirtualBackpackMod : ModInterface
     api.Game_Request(CmdId.Request_Player_ItemExchange, seqNr, ui);
   }
 
-  private ItemStack[] LoadBackpack(string playerKey)
+  private ItemStack[] LoadBackpack(string playerKey, int backpackNumber)
   {
-    string path = Path.Combine(dataPath, playerKey + ".json");
+    string path = Path.Combine(dataPath, playerKey + ".vb" + backpackNumber + ".json");
 
     if (File.Exists(path))
     {
@@ -79,7 +110,7 @@ public class VirtualBackpackMod : ModInterface
       }
       catch (Exception ex)
       {
-        api.Console_Write("Error reading backpack: " + ex.Message);
+        api.Console_Write($"Error reading backpack {backpackNumber}: " + ex.Message);
       }
     }
 
@@ -87,18 +118,18 @@ public class VirtualBackpackMod : ModInterface
     return new ItemStack[40];
   }
 
-  private void SaveBackpack(string playerKey, ItemStack[] items)
+  private void SaveBackpack(string playerKey, ItemStack[] items, int backpackNumber)
   {
     try
     {
-      string path = Path.Combine(dataPath, playerKey + ".json");
+      string path = Path.Combine(dataPath, playerKey + ".vb" + backpackNumber + ".json");
       var wrapper = new BackpackData { items = items };
       var json = JsonConvert.SerializeObject(wrapper, Formatting.Indented);
       File.WriteAllText(path, json);
     }
     catch (Exception ex)
     {
-      api.Console_Write("Error saving backpack: " + ex.Message);
+      api.Console_Write($"Error saving backpack {backpackNumber}: " + ex.Message);
     }
   }
 }
