@@ -15,7 +15,7 @@ I take no reponsibility for lost items or other proplems. It's just a hobby proj
 
 ## 🎯 Features
 
-- 🧳 `/vb` command to open a 40-slot virtual backpack
+- 🧳 `/vb1` and `/vb2`command to open two 40-slot virtual backpacks
 - 💾 Automatic saving when items are moved or the backpack is closed
 - 🔁 Persistent JSON-based storage per player
 - ✅ Works on Linux servers (tested on Hosting Havoc)
